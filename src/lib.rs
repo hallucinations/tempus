@@ -2,7 +2,7 @@ mod error;
 mod now;
 mod relative;
 
-pub use error::TempusError;
+pub use error::PeriodError;
 pub use now::{now, today};
 pub use relative::{
     days_ago, days_from_now, hours_ago, hours_from_now, minutes_ago, minutes_from_now, months_ago,

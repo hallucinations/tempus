@@ -1,5 +1,5 @@
 [package]
-name = "tempus"
+name = "period"
 version = "0.1.0"
 edition = "2024"
 description = "A human-friendly date and time library for Rust"
@@ -7,7 +7,7 @@ license = "MIT"
 keywords = ["date", "time", "datetime", "chrono", "relative"]
 categories = ["date-and-time"]
 readme = "README.md"
-repository = "https://github.com/vasanth/tempus"
+repository = "https://github.com/vasanth/period"
 rust-version = "1.93"
 
 [dependencies]

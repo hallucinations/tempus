@@ -1,13 +1,13 @@
-use crate::error::TempusError;
+use crate::error::PeriodError;
 use chrono::{DateTime, Duration, Local, Months, NaiveDate};
 
 fn validate_positive(
     value: i64,
     unit: &'static str,
     suggestion: &'static str,
-) -> Result<(), TempusError> {
+) -> Result<(), PeriodError> {
     if value < 0 {
-        return Err(TempusError::NegativeValue {
+        return Err(PeriodError::NegativeValue {
             unit,
             suggestion,
             value: value.unsigned_abs(),
@@ -21,10 +21,10 @@ fn validate_positive(
 /// A value of `0` returns the current date-time.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `seconds` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `seconds` is negative.
 /// Use [`seconds_from_now`] for future offsets.
 #[inline]
-pub fn seconds_ago(seconds: i64) -> Result<DateTime<Local>, TempusError> {
+pub fn seconds_ago(seconds: i64) -> Result<DateTime<Local>, PeriodError> {
     validate_positive(seconds, "seconds", "seconds_from_now")?;
     Ok(Local::now() - Duration::seconds(seconds))
 }
@@ -34,10 +34,10 @@ pub fn seconds_ago(seconds: i64) -> Result<DateTime<Local>, TempusError> {
 /// A value of `0` returns the current date-time.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `seconds` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `seconds` is negative.
 /// Use [`seconds_ago`] for past offsets.
 #[inline]
-pub fn seconds_from_now(seconds: i64) -> Result<DateTime<Local>, TempusError> {
+pub fn seconds_from_now(seconds: i64) -> Result<DateTime<Local>, PeriodError> {
     validate_positive(seconds, "seconds", "seconds_ago")?;
     Ok(Local::now() + Duration::seconds(seconds))
 }
@@ -47,10 +47,10 @@ pub fn seconds_from_now(seconds: i64) -> Result<DateTime<Local>, TempusError> {
 /// A value of `0` returns the current date-time.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `minutes` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `minutes` is negative.
 /// Use [`minutes_from_now`] for future offsets.
 #[inline]
-pub fn minutes_ago(minutes: i64) -> Result<DateTime<Local>, TempusError> {
+pub fn minutes_ago(minutes: i64) -> Result<DateTime<Local>, PeriodError> {
     validate_positive(minutes, "minutes", "minutes_from_now")?;
     Ok(Local::now() - Duration::minutes(minutes))
 }
@@ -60,10 +60,10 @@ pub fn minutes_ago(minutes: i64) -> Result<DateTime<Local>, TempusError> {
 /// A value of `0` returns the current date-time.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `minutes` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `minutes` is negative.
 /// Use [`minutes_ago`] for past offsets.
 #[inline]
-pub fn minutes_from_now(minutes: i64) -> Result<DateTime<Local>, TempusError> {
+pub fn minutes_from_now(minutes: i64) -> Result<DateTime<Local>, PeriodError> {
     validate_positive(minutes, "minutes", "minutes_ago")?;
     Ok(Local::now() + Duration::minutes(minutes))
 }
@@ -73,10 +73,10 @@ pub fn minutes_from_now(minutes: i64) -> Result<DateTime<Local>, TempusError> {
 /// A value of `0` returns the current date-time.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `hours` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `hours` is negative.
 /// Use [`hours_from_now`] for future offsets.
 #[inline]
-pub fn hours_ago(hours: i64) -> Result<DateTime<Local>, TempusError> {
+pub fn hours_ago(hours: i64) -> Result<DateTime<Local>, PeriodError> {
     validate_positive(hours, "hours", "hours_from_now")?;
     Ok(Local::now() - Duration::hours(hours))
 }
@@ -86,10 +86,10 @@ pub fn hours_ago(hours: i64) -> Result<DateTime<Local>, TempusError> {
 /// A value of `0` returns the current date-time.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `hours` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `hours` is negative.
 /// Use [`hours_ago`] for past offsets.
 #[inline]
-pub fn hours_from_now(hours: i64) -> Result<DateTime<Local>, TempusError> {
+pub fn hours_from_now(hours: i64) -> Result<DateTime<Local>, PeriodError> {
     validate_positive(hours, "hours", "hours_ago")?;
     Ok(Local::now() + Duration::hours(hours))
 }
@@ -99,10 +99,10 @@ pub fn hours_from_now(hours: i64) -> Result<DateTime<Local>, TempusError> {
 /// A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `days` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `days` is negative.
 /// Use [`days_from_now`] for future offsets.
 #[inline]
-pub fn days_ago(days: i64) -> Result<NaiveDate, TempusError> {
+pub fn days_ago(days: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(days, "days", "days_from_now")?;
     Ok(Local::now().date_naive() - Duration::days(days))
 }
@@ -112,10 +112,10 @@ pub fn days_ago(days: i64) -> Result<NaiveDate, TempusError> {
 /// A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `days` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `days` is negative.
 /// Use [`days_ago`] for past offsets.
 #[inline]
-pub fn days_from_now(days: i64) -> Result<NaiveDate, TempusError> {
+pub fn days_from_now(days: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(days, "days", "days_ago")?;
     Ok(Local::now().date_naive() + Duration::days(days))
 }
@@ -125,10 +125,10 @@ pub fn days_from_now(days: i64) -> Result<NaiveDate, TempusError> {
 /// A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `weeks` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `weeks` is negative.
 /// Use [`weeks_from_now`] for future offsets.
 #[inline]
-pub fn weeks_ago(weeks: i64) -> Result<NaiveDate, TempusError> {
+pub fn weeks_ago(weeks: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(weeks, "weeks", "weeks_from_now")?;
     Ok(Local::now().date_naive() - Duration::weeks(weeks))
 }
@@ -138,10 +138,10 @@ pub fn weeks_ago(weeks: i64) -> Result<NaiveDate, TempusError> {
 /// A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `weeks` is negative.
+/// Returns [`PeriodError::NegativeValue`] if `weeks` is negative.
 /// Use [`weeks_ago`] for past offsets.
 #[inline]
-pub fn weeks_from_now(weeks: i64) -> Result<NaiveDate, TempusError> {
+pub fn weeks_from_now(weeks: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(weeks, "weeks", "weeks_ago")?;
     Ok(Local::now().date_naive() + Duration::weeks(weeks))
 }
@@ -165,13 +165,13 @@ pub fn tomorrow() -> NaiveDate {
 /// A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `months` is negative.
-/// Returns [`TempusError::Overflow`] if `months` exceeds [`u32::MAX`].
+/// Returns [`PeriodError::NegativeValue`] if `months` is negative.
+/// Returns [`PeriodError::Overflow`] if `months` exceeds [`u32::MAX`].
 /// Use [`months_from_now`] for future offsets.
 #[inline]
-pub fn months_ago(months: i64) -> Result<NaiveDate, TempusError> {
+pub fn months_ago(months: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(months, "months", "months_from_now")?;
-    let months_u32 = u32::try_from(months).map_err(|_| TempusError::Overflow {
+    let months_u32 = u32::try_from(months).map_err(|_| PeriodError::Overflow {
         unit: "months",
         value: months,
     })?;
@@ -183,13 +183,13 @@ pub fn months_ago(months: i64) -> Result<NaiveDate, TempusError> {
 /// A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `months` is negative.
-/// Returns [`TempusError::Overflow`] if `months` exceeds [`u32::MAX`].
+/// Returns [`PeriodError::NegativeValue`] if `months` is negative.
+/// Returns [`PeriodError::Overflow`] if `months` exceeds [`u32::MAX`].
 /// Use [`months_ago`] for past offsets.
 #[inline]
-pub fn months_from_now(months: i64) -> Result<NaiveDate, TempusError> {
+pub fn months_from_now(months: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(months, "months", "months_ago")?;
-    let months_u32 = u32::try_from(months).map_err(|_| TempusError::Overflow {
+    let months_u32 = u32::try_from(months).map_err(|_| PeriodError::Overflow {
         unit: "months",
         value: months,
     })?;
@@ -201,13 +201,13 @@ pub fn months_from_now(months: i64) -> Result<NaiveDate, TempusError> {
 /// Internally converts years to months. A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `years` is negative.
-/// Returns [`TempusError::Overflow`] if the equivalent month count overflows.
+/// Returns [`PeriodError::NegativeValue`] if `years` is negative.
+/// Returns [`PeriodError::Overflow`] if the equivalent month count overflows.
 /// Use [`years_from_now`] for future offsets.
 #[inline]
-pub fn years_ago(years: i64) -> Result<NaiveDate, TempusError> {
+pub fn years_ago(years: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(years, "years", "years_from_now")?;
-    let months = u32::try_from(years.saturating_mul(12)).map_err(|_| TempusError::Overflow {
+    let months = u32::try_from(years.saturating_mul(12)).map_err(|_| PeriodError::Overflow {
         unit: "years",
         value: years,
     })?;
@@ -219,13 +219,13 @@ pub fn years_ago(years: i64) -> Result<NaiveDate, TempusError> {
 /// Internally converts years to months. A value of `0` returns today.
 ///
 /// # Errors
-/// Returns [`TempusError::NegativeValue`] if `years` is negative.
-/// Returns [`TempusError::Overflow`] if the equivalent month count overflows.
+/// Returns [`PeriodError::NegativeValue`] if `years` is negative.
+/// Returns [`PeriodError::Overflow`] if the equivalent month count overflows.
 /// Use [`years_ago`] for past offsets.
 #[inline]
-pub fn years_from_now(years: i64) -> Result<NaiveDate, TempusError> {
+pub fn years_from_now(years: i64) -> Result<NaiveDate, PeriodError> {
     validate_positive(years, "years", "years_ago")?;
-    let months = u32::try_from(years.saturating_mul(12)).map_err(|_| TempusError::Overflow {
+    let months = u32::try_from(years.saturating_mul(12)).map_err(|_| PeriodError::Overflow {
         unit: "years",
         value: years,
     })?;
