@@ -366,7 +366,7 @@ pub fn years_from_now(years: i64) -> Result<NaiveDate, PeriodError> {
 /// Future datetimes produce strings like `"in 3 minutes"` or `"tomorrow"`.
 /// A datetime within 30 seconds of now returns `"just now"` regardless of direction.
 ///
-/// The buckets mirror ActiveSupport's `time_ago_in_words`:
+/// The bucketing thresholds:
 ///
 /// | Absolute delta | Past              | Future           |
 /// |----------------|-------------------|------------------|
@@ -390,9 +390,7 @@ pub fn humanize(datetime: DateTime<Local>) -> String {
     const MONTH: i64 = 30 * DAY;
     const YEAR: i64 = 365 * DAY;
 
-    let secs = Local::now()
-        .signed_duration_since(datetime)
-        .num_seconds();
+    let secs = Local::now().signed_duration_since(datetime).num_seconds();
     let is_past = secs >= 0;
     let abs = secs.saturating_abs();
 

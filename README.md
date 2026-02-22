@@ -14,13 +14,15 @@ A human-friendly date and time library for Rust.
 Period provides an expressive, readable API for common date and time operations. Instead of wrestling with offsets and arithmetic, you write code that reads like English.
 
 ```rust
-use period::{today, yesterday, days_ago, weeks_from_now, months_ago};
+use period::{today, yesterday, days_ago, weeks_from_now, months_ago, humanize};
+use period::now;
 
 let today     = today();
 let yesterday = yesterday();
 let past      = days_ago(3)?;
 let future    = weeks_from_now(2)?;
 let earlier   = months_ago(6)?;
+let label     = humanize(now()); // "just now"
 ```
 
 ---
@@ -89,6 +91,35 @@ let t = minutes_from_now(45)?;   // 45 minutes in the future
 let t = hours_ago(2)?;           // 2 hours in the past
 let t = hours_from_now(8)?;      // 8 hours in the future
 ```
+
+### Humanize
+
+Convert any `DateTime<Local>` into a human-readable relative string.
+
+```rust
+use period::humanize;
+use chrono::Local;
+
+let dt = Local::now() - chrono::Duration::minutes(35);
+println!("{}", humanize(dt)); // "35 minutes ago"
+
+let dt = Local::now() + chrono::Duration::hours(2);
+println!("{}", humanize(dt)); // "in 2 hours"
+```
+
+| Absolute delta | Past              | Future           |
+|----------------|-------------------|------------------|
+| < 30 s         | `"just now"`      | `"just now"`     |
+| < 90 s         | `"a minute ago"`  | `"in a minute"`  |
+| < 45 min       | `"N minutes ago"` | `"in N minutes"` |
+| < 90 min       | `"an hour ago"`   | `"in an hour"`   |
+| < 22 h         | `"N hours ago"`   | `"in N hours"`   |
+| < 36 h         | `"yesterday"`     | `"tomorrow"`     |
+| < 25 days      | `"N days ago"`    | `"in N days"`    |
+| < 45 days      | `"a month ago"`   | `"in a month"`   |
+| < 10 months    | `"N months ago"`  | `"in N months"`  |
+| < 18 months    | `"a year ago"`    | `"in a year"`    |
+| ≥ 18 months    | `"N years ago"`   | `"in N years"`   |
 
 ---
 
