@@ -1,1 +1,17 @@
 /target
+
+# Cargo lock is kept for libraries (remove this line for binaries)
+# Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Coverage
+tarpaulin-report.html
+lcov.info
+*.profraw
+*.profdata
+
