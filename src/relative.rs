@@ -12,64 +12,78 @@ fn validate_positive(value: i64, unit: &str, suggestion: &str) -> Result<(), Tem
     Ok(())
 }
 
+#[must_use]
 pub fn seconds_ago(seconds: i64) -> Result<DateTime<Local>, TempusError> {
     validate_positive(seconds, "seconds", "seconds_from_now")?;
     Ok(Local::now() - Duration::seconds(seconds))
 }
 
+
+#[must_use]
 pub fn seconds_from_now(seconds: i64) -> Result<DateTime<Local>, TempusError> {
     validate_positive(seconds, "seconds", "seconds_ago")?;
     Ok(Local::now() + Duration::seconds(seconds))
 }
 
+#[must_use]
 pub fn minutes_ago(minutes: i64) -> Result<DateTime<Local>, TempusError> {
     validate_positive(minutes, "minutes", "minutes_from_now")?;
     Ok(Local::now() - Duration::minutes(minutes))
 }
 
+#[must_use]
 pub fn minutes_from_now(minutes: i64) -> Result<DateTime<Local>, TempusError> {
     validate_positive(minutes, "minutes", "minutes_ago")?;
     Ok(Local::now() + Duration::minutes(minutes))
 }
 
+#[must_use]
 pub fn hours_ago(hours: i64) -> Result<DateTime<Local>, TempusError> {
     validate_positive(hours, "hours", "hours_from_now")?;
     Ok(Local::now() - Duration::hours(hours))
 }
 
+#[must_use]
 pub fn hours_from_now(hours: i64) -> Result<DateTime<Local>, TempusError> {
     validate_positive(hours, "hours", "hours_ago")?;
     Ok(Local::now() + Duration::hours(hours))
 }
 
+#[must_use]
 pub fn days_ago(days: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(days, "days", "days_from_now")?;
     Ok(Local::now().date_naive() - Duration::days(days))
 }
 
+#[must_use]
 pub fn days_from_now(days: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(days, "days", "days_ago")?;
     Ok(Local::now().date_naive() + Duration::days(days))
 }
 
+#[must_use]
 pub fn weeks_ago(weeks: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(weeks, "weeks", "weeks_from_now")?;
     Ok(Local::now().date_naive() - Duration::weeks(weeks))
 }
 
+#[must_use]
 pub fn weeks_from_now(weeks: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(weeks, "weeks", "weeks_ago")?;
     Ok(Local::now().date_naive() + Duration::weeks(weeks))
 }
 
+#[must_use]
 pub fn yesterday() -> NaiveDate {
     Local::now().date_naive() - Duration::days(1)
 }
 
+#[must_use]
 pub fn tomorrow() -> NaiveDate {
     Local::now().date_naive() + Duration::days(1)
 }
 
+#[must_use]
 pub fn months_ago(months: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(months, "months", "months_from_now")?;
     let months_u32 = u32::try_from(months).map_err(|_| TempusError::Overflow {
@@ -79,6 +93,7 @@ pub fn months_ago(months: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() - Months::new(months_u32))
 }
 
+#[must_use]
 pub fn months_from_now(months: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(months, "months", "months_ago")?;
     let months_u32 = u32::try_from(months).map_err(|_| TempusError::Overflow {
@@ -88,11 +103,13 @@ pub fn months_from_now(months: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() + Months::new(months_u32))
 }
 
+#[must_use]
 pub fn years_ago(years: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(years, "years", "years_from_now")?;
     months_ago(years.saturating_mul(12))
 }
 
+#[must_use]
 pub fn years_from_now(years: i64) -> Result<NaiveDate, TempusError> {
     validate_positive(years, "years", "years_ago")?;
     months_from_now(years.saturating_mul(12))

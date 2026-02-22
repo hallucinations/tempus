@@ -1,9 +1,11 @@
 use chrono::{DateTime, Local, NaiveDate};
 
+#[must_use]
 pub fn now() -> DateTime<Local> {
     Local::now()
 }
 
+#[must_use]
 pub fn today() -> NaiveDate {
     Local::now().date_naive()
 }
