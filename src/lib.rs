@@ -4,6 +4,10 @@ pub fn today() -> NaiveDate {
     Local::now().date_naive()
 }
 
+pub fn now() -> DateTime<Local> {
+    Local::now()
+}
+
 pub fn yesterday() -> NaiveDate {
     days_ago(1)
 }
@@ -20,10 +24,6 @@ pub fn days_from_now(days: i64) -> NaiveDate {
     Local::now().date_naive() + Duration::days(days)
 }
 
-pub fn now() -> DateTime<Local> {
-    Local::now()
-}
-
 
 #[cfg(test)]
 mod tests {
@@ -34,6 +34,16 @@ mod tests {
         let date = today();
         let expected = Local::now().date_naive();
         assert_eq!(date, expected);
+    }
+
+    #[test]
+    fn test_now_returns_current_datetime() {
+        let before = Local::now();
+        let result = now();
+        let after = Local::now();
+
+        assert!(result >= before);
+        assert!(result <= after);
     }
 
     #[test]
@@ -62,15 +72,5 @@ mod tests {
         let date = days_from_now(3);
         let expected = Local::now().date_naive() + Duration::days(3);
         assert_eq!(date, expected);
-    }
-
-    #[test]
-    fn test_now_returns_current_datetime() {
-        let before = Local::now();
-        let result = now();
-        let after = Local::now();
-
-        assert!(result >= before);
-        assert!(result <= after);
     }
 }
