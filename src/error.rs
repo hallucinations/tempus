@@ -1,8 +1,9 @@
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
+#[non_exhaustive]
 pub enum TempusError {
-    NegativeValue { unit: &'static str, suggestion: &'static str, value: i64 },
+    NegativeValue { unit: &'static str, suggestion: &'static str, value: u64 },
     Overflow { unit: &'static str, value: i64 },
 }
 

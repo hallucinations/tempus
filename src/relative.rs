@@ -6,7 +6,7 @@ fn validate_positive(value: i64, unit: &'static str, suggestion: &'static str) -
         return Err(TempusError::NegativeValue {
             unit,
             suggestion,
-            value: -value,
+            value: value.unsigned_abs(),
         });
     }
     Ok(())
@@ -244,17 +244,8 @@ pub fn years_from_now(years: i64) -> Result<NaiveDate, TempusError> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use chrono::{Duration, Local, Months};
-    use crate::{
-        seconds_ago, seconds_from_now,
-        minutes_ago, minutes_from_now,
-        hours_ago, hours_from_now,
-        days_ago, days_from_now,
-        weeks_ago, weeks_from_now,
-        yesterday, tomorrow,
-        months_ago, months_from_now,
-        years_ago, years_from_now
-    };
 
     #[test]
     fn test_seconds_ago_returns_correct_datetime() {
@@ -575,6 +566,26 @@ mod tests {
         assert_eq!(
             result.unwrap_err().to_string(),
             "months value 5000000000 is too large"
+        );
+    }
+
+    #[test]
+    fn test_years_ago_overflow_returns_error() {
+        let result = years_ago(1_000_000_000);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "years value 1000000000 is too large"
+        );
+    }
+
+    #[test]
+    fn test_years_from_now_overflow_returns_error() {
+        let result = years_from_now(1_000_000_000);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "years value 1000000000 is too large"
         );
     }
 

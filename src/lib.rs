@@ -1,6 +1,6 @@
 mod now;
 mod relative;
-pub mod error;
+mod error;
 
 pub use error::TempusError;
 pub use now::{now, today};
