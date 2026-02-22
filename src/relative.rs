@@ -818,7 +818,10 @@ mod tests {
 
     #[test]
     fn test_days_from_now_with_zero_returns_today() {
-        assert_eq!(days_from_now(0).unwrap().as_date(), Local::now().date_naive());
+        assert_eq!(
+            days_from_now(0).unwrap().as_date(),
+            Local::now().date_naive()
+        );
     }
 
     #[test]
@@ -890,7 +893,10 @@ mod tests {
 
     #[test]
     fn test_weeks_from_now_with_zero_returns_today() {
-        assert_eq!(weeks_from_now(0).unwrap().as_date(), Local::now().date_naive());
+        assert_eq!(
+            weeks_from_now(0).unwrap().as_date(),
+            Local::now().date_naive()
+        );
     }
 
     #[test]
@@ -983,7 +989,10 @@ mod tests {
 
     #[test]
     fn test_months_from_now_with_zero_returns_today() {
-        assert_eq!(months_from_now(0).unwrap().as_date(), Local::now().date_naive());
+        assert_eq!(
+            months_from_now(0).unwrap().as_date(),
+            Local::now().date_naive()
+        );
     }
 
     #[test]
@@ -1065,7 +1074,10 @@ mod tests {
 
     #[test]
     fn test_years_from_now_with_zero_returns_today() {
-        assert_eq!(years_from_now(0).unwrap().as_date(), Local::now().date_naive());
+        assert_eq!(
+            years_from_now(0).unwrap().as_date(),
+            Local::now().date_naive()
+        );
     }
 
     #[test]
@@ -1773,7 +1785,10 @@ mod tests {
     #[test]
     fn test_hours_ago_negative_one_has_hours_unit() {
         let err = hours_ago(-1).unwrap_err();
-        assert!(matches!(err, PeriodError::NegativeValue { unit: "hours", .. }));
+        assert!(matches!(
+            err,
+            PeriodError::NegativeValue { unit: "hours", .. }
+        ));
     }
 
     #[test]
