@@ -14,10 +14,51 @@ pub use second::{seconds_ago, seconds_from_now};
 pub use week::{weeks_ago, weeks_from_now};
 pub use year::{years_ago, years_from_now};
 
+pub(super) fn validate_non_negative(
+    value: i64,
+    unit: &'static str,
+    suggestion: &'static str,
+) -> Result<(), crate::error::PeriodError> {
+    if value < 0 {
+        return Err(crate::error::PeriodError::NegativeValue {
+            unit,
+            suggestion,
+            value: value.unsigned_abs(),
+        });
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::error::PeriodError;
     use chrono::{Duration, Local};
+
+    // -- validate_non_negative ------------------------------------------------
+
+    #[test]
+    fn test_validate_non_negative_zero_is_ok() {
+        assert!(validate_non_negative(0, "x", "y").is_ok());
+    }
+
+    #[test]
+    fn test_validate_non_negative_positive_is_ok() {
+        assert!(validate_non_negative(100, "x", "y").is_ok());
+    }
+
+    #[test]
+    fn test_validate_non_negative_negative_is_err() {
+        let err = validate_non_negative(-7, "days", "days_from_now").unwrap_err();
+        assert!(matches!(
+            err,
+            PeriodError::NegativeValue {
+                unit: "days",
+                suggestion: "days_from_now",
+                value: 7,
+            }
+        ));
+    }
 
     // -- cross-unit equivalence -----------------------------------------------
 

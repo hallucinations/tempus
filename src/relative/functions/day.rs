@@ -1,7 +1,7 @@
 use crate::error::PeriodError;
 use chrono::{Duration, Local, NaiveDate};
 
-use crate::error::validate_non_negative;
+use super::validate_non_negative;
 use crate::relative::types::Relative;
 
 /// Returns a [`Relative`] moment `days` days in the past.

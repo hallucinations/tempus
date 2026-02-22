@@ -1,7 +1,7 @@
 use crate::error::PeriodError;
 use chrono::{Duration, Local};
 
-use crate::error::validate_non_negative;
+use super::validate_non_negative;
 use crate::relative::types::Relative;
 
 /// Returns a [`Relative`] moment `seconds` seconds in the past.

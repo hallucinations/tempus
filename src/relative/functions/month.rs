@@ -1,7 +1,7 @@
 use crate::error::PeriodError;
 use chrono::{Local, Months};
 
-use crate::error::validate_non_negative;
+use super::validate_non_negative;
 use crate::relative::types::Relative;
 
 /// Returns a [`Relative`] moment `months` calendar months in the past.
