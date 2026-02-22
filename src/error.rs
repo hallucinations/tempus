@@ -24,7 +24,10 @@ impl fmt::Display for TempusError {
                 suggestion,
                 value,
             } => {
-                write!(f, "{unit} must be positive. Did you mean {suggestion}({value})?")
+                write!(
+                    f,
+                    "{unit} must be positive. Did you mean {suggestion}({value})?"
+                )
             }
             TempusError::Overflow { unit, value } => {
                 write!(f, "{unit} value {value} is too large")
