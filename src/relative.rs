@@ -360,6 +360,117 @@ pub fn years_from_now(years: i64) -> Result<NaiveDate, PeriodError> {
         })
 }
 
+/// Returns a human-readable relative-time string for `datetime`.
+///
+/// Past datetimes produce strings like `"3 minutes ago"` or `"yesterday"`.
+/// Future datetimes produce strings like `"in 3 minutes"` or `"tomorrow"`.
+/// A datetime within 30 seconds of now returns `"just now"` regardless of direction.
+///
+/// The buckets mirror ActiveSupport's `time_ago_in_words`:
+///
+/// | Absolute delta | Past              | Future           |
+/// |----------------|-------------------|------------------|
+/// | < 30 s         | `"just now"`      | `"just now"`     |
+/// | < 90 s         | `"a minute ago"`  | `"in a minute"`  |
+/// | < 45 min       | `"N minutes ago"` | `"in N minutes"` |
+/// | < 90 min       | `"an hour ago"`   | `"in an hour"`   |
+/// | < 22 h         | `"N hours ago"`   | `"in N hours"`   |
+/// | < 36 h         | `"yesterday"`     | `"tomorrow"`     |
+/// | < 25 days      | `"N days ago"`    | `"in N days"`    |
+/// | < 45 days      | `"a month ago"`   | `"in a month"`   |
+/// | < 10 months    | `"N months ago"`  | `"in N months"`  |
+/// | < 18 months    | `"a year ago"`    | `"in a year"`    |
+/// | ≥ 18 months    | `"N years ago"`   | `"in N years"`   |
+#[inline]
+#[must_use]
+pub fn humanize(datetime: DateTime<Local>) -> String {
+    const MINUTE: i64 = 60;
+    const HOUR: i64 = 3_600;
+    const DAY: i64 = 86_400;
+    const MONTH: i64 = 30 * DAY;
+    const YEAR: i64 = 365 * DAY;
+
+    let secs = Local::now()
+        .signed_duration_since(datetime)
+        .num_seconds();
+    let is_past = secs >= 0;
+    let abs = secs.saturating_abs();
+
+    if abs < 30 {
+        "just now".to_string()
+    } else if abs < 90 {
+        if is_past {
+            "a minute ago".to_string()
+        } else {
+            "in a minute".to_string()
+        }
+    } else if abs < 45 * MINUTE {
+        let n = abs / MINUTE;
+        let unit = if n == 1 { "minute" } else { "minutes" };
+        if is_past {
+            format!("{n} {unit} ago")
+        } else {
+            format!("in {n} {unit}")
+        }
+    } else if abs < 90 * MINUTE {
+        if is_past {
+            "an hour ago".to_string()
+        } else {
+            "in an hour".to_string()
+        }
+    } else if abs < 22 * HOUR {
+        let n = abs / HOUR;
+        let unit = if n == 1 { "hour" } else { "hours" };
+        if is_past {
+            format!("{n} {unit} ago")
+        } else {
+            format!("in {n} {unit}")
+        }
+    } else if abs < 36 * HOUR {
+        if is_past {
+            "yesterday".to_string()
+        } else {
+            "tomorrow".to_string()
+        }
+    } else if abs < 25 * DAY {
+        let n = abs / DAY;
+        let unit = if n == 1 { "day" } else { "days" };
+        if is_past {
+            format!("{n} {unit} ago")
+        } else {
+            format!("in {n} {unit}")
+        }
+    } else if abs < 45 * DAY {
+        if is_past {
+            "a month ago".to_string()
+        } else {
+            "in a month".to_string()
+        }
+    } else if abs < 10 * MONTH {
+        let n = abs / MONTH;
+        let unit = if n == 1 { "month" } else { "months" };
+        if is_past {
+            format!("{n} {unit} ago")
+        } else {
+            format!("in {n} {unit}")
+        }
+    } else if abs < 18 * MONTH {
+        if is_past {
+            "a year ago".to_string()
+        } else {
+            "in a year".to_string()
+        }
+    } else {
+        let n = abs / YEAR;
+        let unit = if n == 1 { "year" } else { "years" };
+        if is_past {
+            format!("{n} {unit} ago")
+        } else {
+            format!("in {n} {unit}")
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -795,5 +906,135 @@ mod tests {
             years_from_now(-2).unwrap_err().to_string(),
             "years must be positive. Did you mean years_ago(2)?"
         );
+    }
+
+    // ── humanize ────────────────────────────────────────────────────────────
+
+    fn past_dt(secs: i64) -> DateTime<Local> {
+        Local::now() - Duration::seconds(secs)
+    }
+
+    fn future_dt(secs: i64) -> DateTime<Local> {
+        Local::now() + Duration::seconds(secs)
+    }
+
+    #[test]
+    fn test_humanize_just_now_past() {
+        assert_eq!(humanize(past_dt(10)), "just now");
+    }
+
+    #[test]
+    fn test_humanize_just_now_future() {
+        assert_eq!(humanize(future_dt(10)), "just now");
+    }
+
+    #[test]
+    fn test_humanize_a_minute_ago() {
+        assert_eq!(humanize(past_dt(60)), "a minute ago");
+    }
+
+    #[test]
+    fn test_humanize_in_a_minute() {
+        assert_eq!(humanize(future_dt(60)), "in a minute");
+    }
+
+    #[test]
+    fn test_humanize_minutes_ago() {
+        assert_eq!(humanize(past_dt(5 * 60)), "5 minutes ago");
+    }
+
+    #[test]
+    fn test_humanize_in_minutes() {
+        // +30 s buffer: num_seconds() truncates toward zero, so a tiny
+        // sub-second gap between future_dt() and humanize() would otherwise
+        // shave off one second and drop the floor from 5 to 4.
+        assert_eq!(humanize(future_dt(5 * 60 + 30)), "in 5 minutes");
+    }
+
+    #[test]
+    fn test_humanize_1_minute_singular_ago() {
+        // 95 s → n = 1 → singular
+        assert_eq!(humanize(past_dt(95)), "1 minute ago");
+    }
+
+    #[test]
+    fn test_humanize_an_hour_ago() {
+        assert_eq!(humanize(past_dt(60 * 60)), "an hour ago");
+    }
+
+    #[test]
+    fn test_humanize_in_an_hour() {
+        assert_eq!(humanize(future_dt(60 * 60)), "in an hour");
+    }
+
+    #[test]
+    fn test_humanize_hours_ago() {
+        assert_eq!(humanize(past_dt(5 * 3600)), "5 hours ago");
+    }
+
+    #[test]
+    fn test_humanize_in_hours() {
+        assert_eq!(humanize(future_dt(5 * 3600 + 30)), "in 5 hours");
+    }
+
+    #[test]
+    fn test_humanize_yesterday() {
+        assert_eq!(humanize(past_dt(24 * 3600)), "yesterday");
+    }
+
+    #[test]
+    fn test_humanize_tomorrow() {
+        assert_eq!(humanize(future_dt(24 * 3600)), "tomorrow");
+    }
+
+    #[test]
+    fn test_humanize_days_ago() {
+        assert_eq!(humanize(past_dt(5 * 86_400)), "5 days ago");
+    }
+
+    #[test]
+    fn test_humanize_in_days() {
+        assert_eq!(humanize(future_dt(5 * 86_400 + 30)), "in 5 days");
+    }
+
+    #[test]
+    fn test_humanize_a_month_ago() {
+        assert_eq!(humanize(past_dt(30 * 86_400)), "a month ago");
+    }
+
+    #[test]
+    fn test_humanize_in_a_month() {
+        assert_eq!(humanize(future_dt(30 * 86_400)), "in a month");
+    }
+
+    #[test]
+    fn test_humanize_months_ago() {
+        assert_eq!(humanize(past_dt(3 * 30 * 86_400)), "3 months ago");
+    }
+
+    #[test]
+    fn test_humanize_in_months() {
+        assert_eq!(humanize(future_dt(3 * 30 * 86_400 + 30)), "in 3 months");
+    }
+
+    #[test]
+    fn test_humanize_a_year_ago() {
+        // 13 months past — inside "< 18 months" bucket
+        assert_eq!(humanize(past_dt(13 * 30 * 86_400)), "a year ago");
+    }
+
+    #[test]
+    fn test_humanize_in_a_year() {
+        assert_eq!(humanize(future_dt(13 * 30 * 86_400)), "in a year");
+    }
+
+    #[test]
+    fn test_humanize_years_ago() {
+        assert_eq!(humanize(past_dt(3 * 365 * 86_400)), "3 years ago");
+    }
+
+    #[test]
+    fn test_humanize_in_years() {
+        assert_eq!(humanize(future_dt(3 * 365 * 86_400 + 30)), "in 3 years");
     }
 }
