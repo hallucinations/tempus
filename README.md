@@ -23,7 +23,7 @@ let yesterday = yesterday();                         // NaiveDate
 let past      = days_ago(3)?.as_date();              // NaiveDate
 let future    = weeks_from_now(2)?.as_date();        // NaiveDate
 let earlier   = months_ago(6)?.as_datetime();        // DateTime<Local>
-let earlier   = hours_ago(4)?.as_time();             // NaiveTime (time-of-day only)
+let time_of_day = hours_ago(4)?.as_time();           // NaiveTime (time-of-day only)
 let label     = humanize(now());                     // "just now"
 ```
 
