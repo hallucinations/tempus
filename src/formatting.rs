@@ -23,10 +23,7 @@ pub fn to_long_date(date: NaiveDate) -> String {
 /// Accepts any timezone — [`chrono::Local`], [`chrono::Utc`], [`chrono::FixedOffset`], etc.
 #[must_use]
 #[inline]
-pub fn to_iso8601<Tz: TimeZone>(datetime: DateTime<Tz>) -> String
-where
-    Tz::Offset: std::fmt::Display,
-{
+pub fn to_iso8601<Tz: TimeZone>(datetime: &DateTime<Tz>) -> String {
     datetime.to_rfc3339()
 }
 
@@ -36,10 +33,7 @@ where
 /// Accepts any timezone — [`chrono::Local`], [`chrono::Utc`], [`chrono::FixedOffset`], etc.
 #[must_use]
 #[inline]
-pub fn to_rfc2822<Tz: TimeZone>(datetime: DateTime<Tz>) -> String
-where
-    Tz::Offset: std::fmt::Display,
-{
+pub fn to_rfc2822<Tz: TimeZone>(datetime: &DateTime<Tz>) -> String {
     datetime.to_rfc2822()
 }
 
@@ -115,9 +109,11 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        let result = to_iso8601(datetime);
-        assert!(result.starts_with("2026-02-22T14:30:00"));
-        assert!(result.contains('+') || result.contains('-'));
+        let result = to_iso8601(&datetime);
+        assert!(
+            result.starts_with("2026-02-22T14:30:00"),
+            "unexpected iso8601: {result}"
+        );
     }
 
     #[test]
@@ -127,7 +123,7 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        assert_eq!(to_iso8601(datetime), "2026-02-22T14:30:00+00:00");
+        assert_eq!(to_iso8601(&datetime), "2026-02-22T14:30:00+00:00");
     }
 
     #[test]
@@ -137,7 +133,7 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        assert_eq!(to_iso8601(datetime), "2026-02-22T14:30:00+05:30");
+        assert_eq!(to_iso8601(&datetime), "2026-02-22T14:30:00+05:30");
     }
 
     #[test]
@@ -147,21 +143,21 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        assert_eq!(to_iso8601(datetime), "2026-02-22T14:30:00-06:00");
+        assert_eq!(to_iso8601(&datetime), "2026-02-22T14:30:00-06:00");
     }
 
     #[test]
     fn test_to_iso8601_midnight() {
         let tz = FixedOffset::east_opt(0).unwrap();
         let datetime = tz.with_ymd_and_hms(2026, 1, 1, 0, 0, 0).single().unwrap();
-        assert_eq!(to_iso8601(datetime), "2026-01-01T00:00:00+00:00");
+        assert_eq!(to_iso8601(&datetime), "2026-01-01T00:00:00+00:00");
     }
 
     #[test]
     fn test_to_iso8601_leap_day() {
         let tz = FixedOffset::east_opt(0).unwrap();
         let datetime = tz.with_ymd_and_hms(2028, 2, 29, 12, 0, 0).single().unwrap();
-        assert_eq!(to_iso8601(datetime), "2028-02-29T12:00:00+00:00");
+        assert_eq!(to_iso8601(&datetime), "2028-02-29T12:00:00+00:00");
     }
 
     #[test]
@@ -172,8 +168,8 @@ mod tests {
         let dt_utc = utc.with_ymd_and_hms(2026, 1, 1, 0, 0, 0).single().unwrap();
         let dt_ist = ist.with_ymd_and_hms(2026, 1, 1, 5, 30, 0).single().unwrap();
         // Wall-clock strings differ ...
-        assert_eq!(to_iso8601(dt_utc), "2026-01-01T00:00:00+00:00");
-        assert_eq!(to_iso8601(dt_ist), "2026-01-01T05:30:00+05:30");
+        assert_eq!(to_iso8601(&dt_utc), "2026-01-01T00:00:00+00:00");
+        assert_eq!(to_iso8601(&dt_ist), "2026-01-01T05:30:00+05:30");
         // ... but they represent the same UTC instant
         assert_eq!(dt_utc.to_utc(), dt_ist.to_utc());
     }
@@ -186,8 +182,11 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        let result = to_rfc2822(datetime);
-        assert!(result.starts_with("Sun, 22 Feb 2026 14:30:00"));
+        let result = to_rfc2822(&datetime);
+        assert!(
+            result.starts_with("Sun, 22 Feb 2026 14:30:00"),
+            "unexpected rfc2822: {result}"
+        );
     }
 
     #[test]
@@ -197,7 +196,7 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        assert_eq!(to_rfc2822(datetime), "Sun, 22 Feb 2026 14:30:00 +0000");
+        assert_eq!(to_rfc2822(&datetime), "Sun, 22 Feb 2026 14:30:00 +0000");
     }
 
     #[test]
@@ -207,7 +206,7 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        assert_eq!(to_rfc2822(datetime), "Sun, 22 Feb 2026 14:30:00 +0530");
+        assert_eq!(to_rfc2822(&datetime), "Sun, 22 Feb 2026 14:30:00 +0530");
     }
 
     #[test]
@@ -217,27 +216,27 @@ mod tests {
             .with_ymd_and_hms(2026, 2, 22, 14, 30, 0)
             .single()
             .unwrap();
-        assert_eq!(to_rfc2822(datetime), "Sun, 22 Feb 2026 14:30:00 -0600");
+        assert_eq!(to_rfc2822(&datetime), "Sun, 22 Feb 2026 14:30:00 -0600");
     }
 
     #[test]
     fn test_to_rfc2822_weekday_monday() {
         let tz = FixedOffset::east_opt(0).unwrap();
         let datetime = tz.with_ymd_and_hms(2026, 2, 23, 9, 0, 0).single().unwrap(); // Monday
-        assert_eq!(to_rfc2822(datetime), "Mon, 23 Feb 2026 09:00:00 +0000");
+        assert_eq!(to_rfc2822(&datetime), "Mon, 23 Feb 2026 09:00:00 +0000");
     }
 
     #[test]
     fn test_to_rfc2822_weekday_friday() {
         let tz = FixedOffset::east_opt(0).unwrap();
         let datetime = tz.with_ymd_and_hms(2026, 2, 27, 9, 0, 0).single().unwrap(); // Friday
-        assert_eq!(to_rfc2822(datetime), "Fri, 27 Feb 2026 09:00:00 +0000");
+        assert_eq!(to_rfc2822(&datetime), "Fri, 27 Feb 2026 09:00:00 +0000");
     }
 
     #[test]
     fn test_to_rfc2822_leap_day() {
         let tz = FixedOffset::east_opt(0).unwrap();
         let datetime = tz.with_ymd_and_hms(2028, 2, 29, 0, 0, 0).single().unwrap(); // Tuesday
-        assert_eq!(to_rfc2822(datetime), "Tue, 29 Feb 2028 00:00:00 +0000");
+        assert_eq!(to_rfc2822(&datetime), "Tue, 29 Feb 2028 00:00:00 +0000");
     }
 }

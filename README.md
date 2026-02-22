@@ -176,8 +176,8 @@ to_long_date(date);    // "February 22, 2026"
 
 let tz = FixedOffset::east_opt(5 * 3600 + 30 * 60).unwrap(); // UTC+5:30
 let dt  = tz.with_ymd_and_hms(2026, 2, 22, 14, 30, 0).single().unwrap();
-to_iso8601(dt);        // "2026-02-22T14:30:00+05:30"
-to_rfc2822(dt);        // "Sun, 22 Feb 2026 14:30:00 +0530"
+to_iso8601(&dt);        // "2026-02-22T14:30:00+05:30"
+to_rfc2822(&dt);        // "Sun, 22 Feb 2026 14:30:00 +0530"
 ```
 
 `to_iso8601` and `to_rfc2822` accept any timezone — `Local`, `Utc`, `FixedOffset`, etc.
