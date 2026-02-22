@@ -5,11 +5,11 @@ pub fn today() -> NaiveDate {
 }
 
 pub fn yesterday() -> NaiveDate {
-    Local::now().date_naive() - Duration::days(1)
+    days_ago(1)
 }
 
 pub fn tomorrow() -> NaiveDate {
-    Local::now().date_naive() + Duration::days(1)
+    days_from_now(1)
 }
 
 pub fn days_ago(days: i64) -> NaiveDate {
