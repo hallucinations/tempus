@@ -251,17 +251,31 @@ pub fn weeks_from_now(weeks: i64) -> Result<NaiveDate, PeriodError> {
 }
 
 /// Returns yesterday's local date.
+///
+/// # Panics
+///
+/// Panics if today is [`NaiveDate::MIN`], which cannot occur in practice.
 #[must_use]
 #[inline]
 pub fn yesterday() -> NaiveDate {
-    Local::now().date_naive() - Duration::days(1)
+    Local::now()
+        .date_naive()
+        .pred_opt()
+        .expect("date underflow")
 }
 
 /// Returns tomorrow's local date.
+///
+/// # Panics
+///
+/// Panics if today is [`NaiveDate::MAX`], which cannot occur in practice.
 #[must_use]
 #[inline]
 pub fn tomorrow() -> NaiveDate {
-    Local::now().date_naive() + Duration::days(1)
+    Local::now()
+        .date_naive()
+        .succ_opt()
+        .expect("date overflow")
 }
 
 /// Returns the local date `months` calendar months in the past.
@@ -775,14 +789,14 @@ mod tests {
     #[test]
     fn test_yesterday_returns_previous_date() {
         let date = yesterday();
-        let expected = Local::now().date_naive() - Duration::days(1);
+        let expected = Local::now().date_naive().pred_opt().unwrap();
         assert_eq!(date, expected);
     }
 
     #[test]
     fn test_tomorrow_returns_next_date() {
         let date = tomorrow();
-        let expected = Local::now().date_naive() + Duration::days(1);
+        let expected = Local::now().date_naive().succ_opt().unwrap();
         assert_eq!(date, expected);
     }
 
@@ -1034,5 +1048,55 @@ mod tests {
     #[test]
     fn test_humanize_in_years() {
         assert_eq!(humanize(future_dt(3 * 365 * 86_400 + 30)), "in 3 years");
+    }
+
+    #[test]
+    fn test_humanize_in_1_minute_singular() {
+        // 95 s → n = 1 → singular future form
+        assert_eq!(humanize(future_dt(95)), "in 1 minute");
+    }
+
+    #[test]
+    fn test_humanize_1_hour_singular_ago() {
+        // 5401 s (≈90 min) → hours bucket, n = 1
+        assert_eq!(humanize(past_dt(5401)), "1 hour ago");
+    }
+
+    #[test]
+    fn test_humanize_in_1_hour_singular() {
+        assert_eq!(humanize(future_dt(5401)), "in 1 hour");
+    }
+
+    #[test]
+    fn test_humanize_1_day_singular_ago() {
+        // 37 h → days bucket, n = 1
+        assert_eq!(humanize(past_dt(37 * 3_600)), "1 day ago");
+    }
+
+    #[test]
+    fn test_humanize_in_1_day_singular() {
+        assert_eq!(humanize(future_dt(37 * 3_600 + 30)), "in 1 day");
+    }
+
+    #[test]
+    fn test_humanize_1_month_singular_ago() {
+        // 46 days → months bucket, n = 1
+        assert_eq!(humanize(past_dt(46 * 86_400)), "1 month ago");
+    }
+
+    #[test]
+    fn test_humanize_in_1_month_singular() {
+        assert_eq!(humanize(future_dt(46 * 86_400 + 30)), "in 1 month");
+    }
+
+    #[test]
+    fn test_humanize_1_year_singular_ago() {
+        // 19 × 30 days → years bucket, n = 1
+        assert_eq!(humanize(past_dt(19 * 30 * 86_400)), "1 year ago");
+    }
+
+    #[test]
+    fn test_humanize_in_1_year_singular() {
+        assert_eq!(humanize(future_dt(19 * 30 * 86_400 + 30)), "in 1 year");
     }
 }
