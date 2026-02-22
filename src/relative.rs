@@ -12,6 +12,13 @@ fn validate_positive(value: i64, unit: &str, suggestion: &str) -> Result<(), Tem
     Ok(())
 }
 
+/// Returns the local date-time `seconds` seconds in the past.
+///
+/// A value of `0` returns the current date-time.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `seconds` is negative.
+/// Use [`seconds_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn seconds_ago(seconds: i64) -> Result<DateTime<Local>, TempusError> {
@@ -20,6 +27,13 @@ pub fn seconds_ago(seconds: i64) -> Result<DateTime<Local>, TempusError> {
 }
 
 
+/// Returns the local date-time `seconds` seconds in the future.
+///
+/// A value of `0` returns the current date-time.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `seconds` is negative.
+/// Use [`seconds_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn seconds_from_now(seconds: i64) -> Result<DateTime<Local>, TempusError> {
@@ -27,6 +41,13 @@ pub fn seconds_from_now(seconds: i64) -> Result<DateTime<Local>, TempusError> {
     Ok(Local::now() + Duration::seconds(seconds))
 }
 
+/// Returns the local date-time `minutes` minutes in the past.
+///
+/// A value of `0` returns the current date-time.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `minutes` is negative.
+/// Use [`minutes_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn minutes_ago(minutes: i64) -> Result<DateTime<Local>, TempusError> {
@@ -34,6 +55,13 @@ pub fn minutes_ago(minutes: i64) -> Result<DateTime<Local>, TempusError> {
     Ok(Local::now() - Duration::minutes(minutes))
 }
 
+/// Returns the local date-time `minutes` minutes in the future.
+///
+/// A value of `0` returns the current date-time.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `minutes` is negative.
+/// Use [`minutes_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn minutes_from_now(minutes: i64) -> Result<DateTime<Local>, TempusError> {
@@ -41,6 +69,13 @@ pub fn minutes_from_now(minutes: i64) -> Result<DateTime<Local>, TempusError> {
     Ok(Local::now() + Duration::minutes(minutes))
 }
 
+/// Returns the local date-time `hours` hours in the past.
+///
+/// A value of `0` returns the current date-time.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `hours` is negative.
+/// Use [`hours_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn hours_ago(hours: i64) -> Result<DateTime<Local>, TempusError> {
@@ -48,6 +83,13 @@ pub fn hours_ago(hours: i64) -> Result<DateTime<Local>, TempusError> {
     Ok(Local::now() - Duration::hours(hours))
 }
 
+/// Returns the local date-time `hours` hours in the future.
+///
+/// A value of `0` returns the current date-time.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `hours` is negative.
+/// Use [`hours_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn hours_from_now(hours: i64) -> Result<DateTime<Local>, TempusError> {
@@ -55,6 +97,13 @@ pub fn hours_from_now(hours: i64) -> Result<DateTime<Local>, TempusError> {
     Ok(Local::now() + Duration::hours(hours))
 }
 
+/// Returns the local date `days` days in the past.
+///
+/// A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `days` is negative.
+/// Use [`days_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn days_ago(days: i64) -> Result<NaiveDate, TempusError> {
@@ -62,6 +111,13 @@ pub fn days_ago(days: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() - Duration::days(days))
 }
 
+/// Returns the local date `days` days in the future.
+///
+/// A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `days` is negative.
+/// Use [`days_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn days_from_now(days: i64) -> Result<NaiveDate, TempusError> {
@@ -69,6 +125,13 @@ pub fn days_from_now(days: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() + Duration::days(days))
 }
 
+/// Returns the local date `weeks` weeks in the past.
+///
+/// A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `weeks` is negative.
+/// Use [`weeks_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn weeks_ago(weeks: i64) -> Result<NaiveDate, TempusError> {
@@ -76,6 +139,13 @@ pub fn weeks_ago(weeks: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() - Duration::weeks(weeks))
 }
 
+/// Returns the local date `weeks` weeks in the future.
+///
+/// A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `weeks` is negative.
+/// Use [`weeks_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn weeks_from_now(weeks: i64) -> Result<NaiveDate, TempusError> {
@@ -83,18 +153,28 @@ pub fn weeks_from_now(weeks: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() + Duration::weeks(weeks))
 }
 
+/// Returns yesterday's local date.
 #[must_use]
 #[inline]
 pub fn yesterday() -> NaiveDate {
     Local::now().date_naive() - Duration::days(1)
 }
 
+/// Returns tomorrow's local date.
 #[must_use]
 #[inline]
 pub fn tomorrow() -> NaiveDate {
     Local::now().date_naive() + Duration::days(1)
 }
 
+/// Returns the local date `months` calendar months in the past.
+///
+/// A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `months` is negative.
+/// Returns [`TempusError::Overflow`] if `months` exceeds [`u32::MAX`].
+/// Use [`months_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn months_ago(months: i64) -> Result<NaiveDate, TempusError> {
@@ -106,6 +186,14 @@ pub fn months_ago(months: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() - Months::new(months_u32))
 }
 
+/// Returns the local date `months` calendar months in the future.
+///
+/// A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `months` is negative.
+/// Returns [`TempusError::Overflow`] if `months` exceeds [`u32::MAX`].
+/// Use [`months_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn months_from_now(months: i64) -> Result<NaiveDate, TempusError> {
@@ -117,6 +205,14 @@ pub fn months_from_now(months: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() + Months::new(months_u32))
 }
 
+/// Returns the local date `years` calendar years in the past.
+///
+/// Internally converts years to months. A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `years` is negative.
+/// Returns [`TempusError::Overflow`] if the equivalent month count overflows.
+/// Use [`years_from_now`] for future offsets.
 #[must_use]
 #[inline]
 pub fn years_ago(years: i64) -> Result<NaiveDate, TempusError> {
@@ -128,6 +224,14 @@ pub fn years_ago(years: i64) -> Result<NaiveDate, TempusError> {
     Ok(Local::now().date_naive() - Months::new(months as u32))
 }
 
+/// Returns the local date `years` calendar years in the future.
+///
+/// Internally converts years to months. A value of `0` returns today.
+///
+/// # Errors
+/// Returns [`TempusError::NegativeValue`] if `years` is negative.
+/// Returns [`TempusError::Overflow`] if the equivalent month count overflows.
+/// Use [`years_ago`] for past offsets.
 #[must_use]
 #[inline]
 pub fn years_from_now(years: i64) -> Result<NaiveDate, TempusError> {

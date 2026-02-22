@@ -1,10 +1,12 @@
 use chrono::{DateTime, Local, NaiveDate};
 
+/// Returns the current local date and time.
 #[must_use]
 pub fn now() -> DateTime<Local> {
     Local::now()
 }
 
+/// Returns today's local date (no time component).
 #[must_use]
 pub fn today() -> NaiveDate {
     Local::now().date_naive()
