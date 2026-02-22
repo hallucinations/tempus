@@ -7,7 +7,7 @@ use crate::relative::types::Relative;
 /// Returns a [`Relative`] moment `months` calendar months in the past.
 ///
 /// A value of `0` returns the current date-time. Use `.as_date()` to get a
-/// [`NaiveDate`] if you do not need the time component.
+/// [`chrono::NaiveDate`] if you do not need the time component.
 ///
 /// # Errors
 /// Returns [`PeriodError::NegativeValue`] if `months` is negative.
@@ -32,7 +32,7 @@ pub fn months_ago(months: i64) -> Result<Relative, PeriodError> {
 /// Returns a [`Relative`] moment `months` calendar months in the future.
 ///
 /// A value of `0` returns the current date-time. Use `.as_date()` to get a
-/// [`NaiveDate`] if you do not need the time component.
+/// [`chrono::NaiveDate`] if you do not need the time component.
 ///
 /// # Errors
 /// Returns [`PeriodError::NegativeValue`] if `months` is negative.

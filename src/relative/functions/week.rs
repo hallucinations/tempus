@@ -7,7 +7,7 @@ use crate::relative::types::Relative;
 /// Returns a [`Relative`] moment `weeks` weeks in the past.
 ///
 /// A value of `0` returns the current date-time. Use `.as_date()` to get a
-/// [`NaiveDate`] if you do not need the time component.
+/// [`chrono::NaiveDate`] if you do not need the time component.
 ///
 /// # Errors
 /// Returns [`PeriodError::NegativeValue`] if `weeks` is negative.
@@ -32,7 +32,7 @@ pub fn weeks_ago(weeks: i64) -> Result<Relative, PeriodError> {
 /// Returns a [`Relative`] moment `weeks` weeks in the future.
 ///
 /// A value of `0` returns the current date-time. Use `.as_date()` to get a
-/// [`NaiveDate`] if you do not need the time component.
+/// [`chrono::NaiveDate`] if you do not need the time component.
 ///
 /// # Errors
 /// Returns [`PeriodError::NegativeValue`] if `weeks` is negative.

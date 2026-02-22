@@ -7,7 +7,7 @@ use crate::relative::types::Relative;
 /// Returns a [`Relative`] moment `years` calendar years in the past.
 ///
 /// Internally converts years to months. A value of `0` returns the current
-/// date-time. Use `.as_date()` to get a [`NaiveDate`] if you do not need the
+/// date-time. Use `.as_date()` to get a [`chrono::NaiveDate`] if you do not need the
 /// time component.
 ///
 /// # Errors
@@ -33,7 +33,7 @@ pub fn years_ago(years: i64) -> Result<Relative, PeriodError> {
 /// Returns a [`Relative`] moment `years` calendar years in the future.
 ///
 /// Internally converts years to months. A value of `0` returns the current
-/// date-time. Use `.as_date()` to get a [`NaiveDate`] if you do not need the
+/// date-time. Use `.as_date()` to get a [`chrono::NaiveDate`] if you do not need the
 /// time component.
 ///
 /// # Errors
