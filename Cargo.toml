@@ -2,6 +2,22 @@
 name = "tempus"
 version = "0.1.0"
 edition = "2024"
+description = "A human-friendly date and time library for Rust"
+license = "MIT"
+keywords = ["date", "time", "datetime", "chrono", "relative"]
+categories = ["date-and-time"]
+readme = "README.md"
+repository = "https://github.com/vasanth/tempus"
+rust-version = "1.75"
 
 [dependencies]
 chrono = "0.4"
+
+[lints.rust]
+unused = "warn"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+# allow these pedantic lints that are too noisy for this crate
+module_name_repetitions = "allow"
